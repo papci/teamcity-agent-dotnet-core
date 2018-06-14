@@ -17,8 +17,8 @@ RUN apt-get upgrade -y
 RUN apt-get install tzdata -y 
 
 # install .NET Core
-ENV DOTNET_VER "dotnet-sdk-2.0.0"
-#(apt-cache search dotnet-dev-2.0.0 | awk '{print $1}') | sh 
+ENV DOTNET_VER "dotnet-sdk-2.1.0"
+#(apt-cache search dotnet-dev-2.1.0 | awk '{print $1}') | sh 
 RUN apt-get install ${DOTNET_VER} -y
 
 # install mono-devel

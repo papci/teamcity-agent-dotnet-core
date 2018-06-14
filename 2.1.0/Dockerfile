@@ -30,10 +30,11 @@ RUN apt-get install ${DOTNET_VER} -y
 RUN apt-get install mono-devel mono-dbg mono-xbuild libmono-addins-* -y 
     
 #npm utilities
-RUN apt-get install nodejs -y
-RUN npm install npm -g
-RUN install bower gulp -g
-
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g  bower gulp
 # install ansible
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && \

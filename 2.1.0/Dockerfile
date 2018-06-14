@@ -5,6 +5,7 @@ LABEL maintainer "P-A <pa@nextinpact.com>"
 ADD libicu52_52.1-8_amd64.deb /tmp/libicu52_52.1-8_amd64.deb
 RUN dpkg -i /tmp/libicu52_52.1-8_amd64.deb
 
+RUN apt-get install wget -y
 # install .NET Core
 RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb 
 RUN dpkg -i packages-microsoft-prod.deb 

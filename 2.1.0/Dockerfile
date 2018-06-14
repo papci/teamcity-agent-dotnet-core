@@ -1,52 +1,58 @@
-FROM jetbrains/teamcity-agent
-FROM ubuntu:18.04
-LABEL maintainer "P-A <pa@nextinpact.com>"
+FROM teamcity-minimal-agent:latest
 
-#installing wget & curl
-RUN apt-get update -y
-RUN apt-cache search wget 
-RUN apt-get install wget -y
-RUN apt-get install curl -y
+MAINTAINER P-A <pa@nextinpact.com>
 
-#installing gpg
-RUN apt-get install gpg -y
-# install .NET Core
-RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
-RUN mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
-RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/prod.list 
-RUN mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
-RUN chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-RUN chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+LABEL dockerImage.teamcity.version="latest" \
+      dockerImage.teamcity.buildNumber="latest"
 
-RUN apt-get install apt-transport-https -y
-RUN apt-get update
+ENV NUGET_XMLDOC_MODE=skip \
+    DOTNET_CLI_TELEMETRY_OPTOUT=true \
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true \
+    GIT_SSH_VARIANT=ssh
 
-RUN apt-get install tzdata -y 
-RUN apt-cache search dotnet-sdk 
-# install .NET Core
-ENV DOTNET_VER "dotnet-sdk-2.1"
-#(apt-cache search dotnet-dev-2.1 | awk '{print $1}') | sh 
-RUN apt-get install ${DOTNET_VER} -y
-
-# install mono-devel
-RUN apt-get install mono-devel mono-dbg mono-xbuild libmono-addins-* -y 
-    
-#npm utilities
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g  bower gulp
-# install ansible
-RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && \
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:openjdk-r/ppa && add-apt-repository -y ppa:git-core/ppa && apt-get update && \
+    apt-get install -y git mercurial openjdk-8-jdk apt-transport-https ca-certificates && \
+    \
+    apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 9DC858229FC7DD38854AE2D88D81803C0EBFCD88 && \
+    echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" > /etc/apt/sources.list.d/docker.list && \
+    \
+    apt-cache policy docker-ce && \
     apt-get update && \
-    apt-get install -y ansible
+    apt-get install -y docker-ce=18.03.0~ce-0~ubuntu && \
+    systemctl disable docker && \
+    curl -SL https://github.com/docker/compose/releases/download/1.20.1/docker-compose-Linux-x86_64 -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose && \
+    \
+    apt-get install -y --no-install-recommends \
+            libc6 \
+            libcurl3 \
+            libgcc1 \
+            libgssapi-krb5-2 \
+            libicu55 \
+            liblttng-ust0 \
+            libssl1.0.0 \
+            libstdc++6 \
+            libunwind8 \
+            libuuid1 \
+            zlib1g \
+        && rm -rf /var/lib/apt/lists/* && \
+    \
+    curl -SL https://download.microsoft.com/download/8/8/5/88544F33-836A-49A5-8B67-451C24709A8F/dotnet-sdk-2.1.300-osx-x64.tar.gz --output dotnet.tar.gz \
+        && mkdir -p /usr/share/dotnet \
+        && tar -zxf dotnet.tar.gz -C /usr/share/dotnet \
+        && rm dotnet.tar.gz \
+        && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
+    \
+    mkdir warmup \
+        && cd warmup \
+        && dotnet new \
+        && cd .. \
+        && rm -rf warmup \
+        && rm -rf /tmp/NuGetScratch && \
+    \
+    apt-get clean all && \
+    \
+    usermod -aG docker buildagent
 
-VOLUME /opt/buildagent/work
-VOLUME /opt/buildagent/logs
-VOLUME /data/teamcity_agent/conf
-VOLUME /opt/buildagent/plugins
-
-ENV DOCKER_HOST ""
-ENV DOCKER_BIN "/usr/bin/docker"
+COPY run-docker.sh /services/run-docker.sh

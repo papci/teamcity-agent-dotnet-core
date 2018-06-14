@@ -1,5 +1,5 @@
 FROM jetbrains/teamcity-agent
-LABEL maintainer "Jacek Kleczkowski <jacek@ksoft.biz>"
+LABEL maintainer "P-A <pa@nextinpact.com>"
 
 # image is based on Ubuntu 15 - fix for .NET Core installation
 ADD libicu52_52.1-8_amd64.deb /tmp/libicu52_52.1-8_amd64.deb
@@ -15,7 +15,7 @@ RUN sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet-
 RUN apt-get upgrade -y
 
 RUN apt-get install tzdata -y 
-
+RUN apt-cache search dotnet-sdk 
 # install .NET Core
 ENV DOTNET_VER "dotnet-sdk-2.1"
 #(apt-cache search dotnet-dev-2.1 | awk '{print $1}') | sh 

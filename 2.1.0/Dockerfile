@@ -6,7 +6,8 @@ LABEL maintainer "P-A <pa@nextinpact.com>"
 RUN apt-get update -y
 RUN apt-cache search wget 
 RUN apt-get install wget -y
-
+#installing gpg
+RUN apt-get install gpg -y
 # install .NET Core
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
 RUN mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/

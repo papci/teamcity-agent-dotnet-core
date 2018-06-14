@@ -1,7 +1,8 @@
 FROM jetbrains/teamcity-agent
 FROM ubuntu:18.04
 LABEL maintainer "P-A <pa@nextinpact.com>"
-RUN apt-cache search wget -y
+RUN apt-get update -y
+RUN apt-cache search wget 
 RUN apt-get install wget -y
 # install .NET Core
 RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb 

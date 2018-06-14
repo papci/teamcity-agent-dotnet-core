@@ -46,7 +46,7 @@ RUN apt-get update && \
     \
     mkdir warmup \
         && cd warmup \
-        && dotnet new \
+        && dotnet --version \
         && cd .. \
         && rm -rf warmup \
         && rm -rf /tmp/NuGetScratch && \

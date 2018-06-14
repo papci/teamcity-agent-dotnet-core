@@ -17,7 +17,7 @@ RUN sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet-
 RUN apt-get install tzdata -y 
 
 # install .NET Core
-ENV DOTNET_VER "dotnet-sdk-2.0.0"
+ENV DOTNET_VER "dotnet-sdk-2.1.0"
 #(apt-cache search dotnet-dev-2.0.0 | awk '{print $1}') | sh 
 RUN apt-get install ${DOTNET_VER} -y
 

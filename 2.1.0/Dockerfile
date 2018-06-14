@@ -30,7 +30,7 @@ RUN apt-get install ${DOTNET_VER} -y
 RUN apt-get install mono-devel mono-dbg mono-xbuild libmono-addins-* -y 
     
 #npm utilities
-RUN apt-get install nodejs
+RUN apt-get install nodejs -y
 RUN npm install npm -g
 RUN install bower gulp -g
 

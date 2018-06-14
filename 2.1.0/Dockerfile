@@ -2,10 +2,12 @@ FROM jetbrains/teamcity-agent
 FROM ubuntu:18.04
 LABEL maintainer "P-A <pa@nextinpact.com>"
 
-#installing wget
+#installing wget & curl
 RUN apt-get update -y
 RUN apt-cache search wget 
 RUN apt-get install wget -y
+RUN apt-get install curl -y
+
 #installing gpg
 RUN apt-get install gpg -y
 # install .NET Core

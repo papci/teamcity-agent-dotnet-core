@@ -1,15 +1,22 @@
 FROM jetbrains/teamcity-agent
 FROM ubuntu:18.04
 LABEL maintainer "P-A <pa@nextinpact.com>"
+
+#installing wget
 RUN apt-get update -y
 RUN apt-cache search wget 
 RUN apt-get install wget -y
+
 # install .NET Core
-RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb 
-RUN dpkg -i packages-microsoft-prod.deb 
+RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
+RUN mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
+RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/prod.list 
+RUN mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
+RUN chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+RUN chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+
 RUN apt-get install apt-transport-https -y
-RUN apt-get update -y
-RUN apt-get upgrade -y
+RUN apt-get update
 
 RUN apt-get install tzdata -y 
 RUN apt-cache search dotnet-sdk 

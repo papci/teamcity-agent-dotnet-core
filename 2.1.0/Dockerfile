@@ -29,13 +29,10 @@ RUN apt-get install ${DOTNET_VER} -y
 # install mono-devel
 RUN apt-get install mono-devel mono-dbg mono-xbuild libmono-addins-* -y 
     
-# install web tools which are required for "dotnet publish" command
-RUN apt remove nodejs npm
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
-
-RUN apt-get install nodejs -y && \
-    npm install npm -g && \
-    npm install bower gulp -g
+#npm utilities
+RUN apt-get install nodejs
+RUN npm install npm -g
+RUN install bower gulp -g
 
 # install ansible
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list && \

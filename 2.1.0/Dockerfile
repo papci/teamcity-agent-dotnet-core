@@ -1,9 +1,6 @@
 FROM jetbrains/teamcity-agent
+FROM ubuntu:18.04
 LABEL maintainer "P-A <pa@nextinpact.com>"
-
-# image is based on Ubuntu 15 - fix for .NET Core installation
-ADD libicu52_52.1-8_amd64.deb /tmp/libicu52_52.1-8_amd64.deb
-RUN dpkg -i /tmp/libicu52_52.1-8_amd64.deb
 
 RUN apt-get install wget -y
 # install .NET Core
